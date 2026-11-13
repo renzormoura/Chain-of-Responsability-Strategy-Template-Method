@@ -1,0 +1,43 @@
+@startuml
+title Integração dos padrões Chain of Responsability, Strategy e Template Method - Pedidos de e-commerce
+skinparam classAttributeIconSize 0
+package "Template Method" {
+  abstract class Pedido {
+    -valorItens: float
+    -frete: Frete
+    +calcularTotal(): float <<template>>
+    #{abstract} calcularDesconto(): float
+    +getTipo(): String
+  }
+  class PedidoVarejo
+  class PedidoAtacado
+}
+package "Strategy" {
+  interface Frete {
+    +calcular(valorItens: float): float
+  }
+  class FreteNormal
+  class FreteExpresso
+}
+package "Chain of Responsability" {
+  abstract class Aprovador {
+    -superior: Aprovador
+    +{abstract} getLimite(): float
+    +{abstract} getCargo(): String
+    +aprovar(pedido: Pedido): String
+  }
+  class Vendedor
+  class Gerente
+  class Diretor
+}
+Pedido <|-- PedidoVarejo
+Pedido <|-- PedidoAtacado
+Pedido o--> Frete
+Frete <|.. FreteNormal
+Frete <|.. FreteExpresso
+Aprovador <|-- Vendedor
+Aprovador <|-- Gerente
+Aprovador <|-- Diretor
+Aprovador --> Aprovador : superior
+Aprovador ..> Pedido : aprova
+@enduml
